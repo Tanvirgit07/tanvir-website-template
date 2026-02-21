@@ -7,6 +7,8 @@ function page() {
         <ChangePasswordForm />
     </div>
   )
+
+  
 }
 
 export default page
