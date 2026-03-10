@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export function HeroSection() {
   return (
@@ -20,15 +21,17 @@ export function HeroSection() {
               and impactful.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="bg-[#7DBAED] hover:bg-[#7DBAED]/90 gap-3 rounded-full px-6 h-[51px] text-white text-base font-semibold"
-              >
-                Donate now
-                <span className="flex items-center justify-center w-6 h-6 bg-white/20 rounded-full">
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </Button>
+              <Link href="/donor-information">
+                <Button
+                  size="lg"
+                  className="bg-[#7DBAED] hover:bg-[#7DBAED]/90 gap-3 rounded-full px-6 h-[51px] text-white text-base font-semibold"
+                >
+                  Donate now
+                  <span className="flex items-center justify-center w-6 h-6 bg-white/20 rounded-full">
+                    <ArrowRight className="h-4 w-4" />
+                  </span>
+                </Button>
+              </Link>
             </div>
           </div>
 

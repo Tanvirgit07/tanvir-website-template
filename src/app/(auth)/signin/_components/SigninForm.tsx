@@ -34,7 +34,7 @@ function SigninForm() {
         throw new Error(res?.error);
       }
 
-      toast.success("Login Successfully !");
+      toast.success("Login Successfully! 🎉");
       router.push("/");
     } catch (err: any) {
       toast.error(err.message);
