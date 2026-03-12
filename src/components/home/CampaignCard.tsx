@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { Card } from '@/components/ui/card';
-import { Button } from '../ui/button';
-import { ArrowRight } from 'lucide-react';
+import Image from "next/image";
+import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { Button } from "../ui/button";
+import { ArrowRight } from "lucide-react";
 
 interface Campaign {
   id: string; // ✅ number → string
@@ -21,7 +21,6 @@ interface CampaignCardProps {
 }
 
 export function CampaignCard({ campaign }: CampaignCardProps) {
-
   const progress =
     campaign.goal > 0 ? (campaign.raised / campaign.goal) * 100 : 0;
 
@@ -30,10 +29,8 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
 
   return (
     <Card className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
-      
       {/* Image Section */}
       <div className="relative w-full h-[257px] bg-gray-200 overflow-hidden">
-        
         <Image
           src={campaign.image}
           alt={campaign.title}
@@ -72,15 +69,15 @@ export function CampaignCard({ campaign }: CampaignCardProps) {
               {raisedFormatted}
             </p>
 
-            <Button className="bg-[#7DBAED] hover:bg-[#7DBAED]/90 h-[42px] rounded-full text-sm font-semibold">
-              Donate
-              <ArrowRight />
-            </Button>
+            <Link href={`/all-campaigns/${campaign.id}`}>
+              <Button className="bg-[#0024DA] hover:bg-[#0024DA]/90 h-[42px] rounded-[8px] text-sm font-semibold">
+                Donate
+                <ArrowRight className="border rounded-full" />
+              </Button>
+            </Link>
           </div>
 
-          <p className="text-xs text-[#424242]">
-            Raise goal {goalFormatted}
-          </p>
+          <p className="text-xs text-[#424242]">Raise goal {goalFormatted}</p>
         </div>
 
         {/* View Details Button */}

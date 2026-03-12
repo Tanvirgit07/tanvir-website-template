@@ -9,7 +9,7 @@ import Link from "next/link";
 
 interface Donor {
   _id: string;
-  studentId: string;
+  studentId: string | null;
   donor: {
     name: string;
     email: string;
@@ -19,6 +19,18 @@ interface Donor {
   };
   amount: number;
   createdAt: string;
+}
+
+interface TopDonor {
+  _id: string;
+  name: string;
+  email: string;
+  mobile: string;
+  city: string;
+  country: string;
+  totalAmount: number;
+  donationsCount: number;
+  lastDonatedAt: string;
 }
 
 interface Student {
@@ -39,7 +51,12 @@ interface CampaignApiResponse {
   raiseGoal: string;
   createdBy: { _id: string; name: string; email: string; role: string };
   createdAt: string;
-  donations: Donor[];
+  studentDonations: Donor[];
+  guestDonations: Donor[];
+  donorStats: {
+    totalDonors: number;
+    topDonors: TopDonor[];
+  };
 }
 
 type Tab = "story" | "donors";
@@ -153,12 +170,14 @@ export function ViewCampaings() {
   const story = apiData?.description ?? "";
   const storyPreview = story.slice(0, 320);
 
-  // const students = apiData?.students ?? [];
-  const donations = apiData?.donations ?? [];
+  // Combine studentDonations + guestDonations for donors tab
+  const studentDonations = apiData?.studentDonations ?? [];
+  const guestDonations = apiData?.guestDonations ?? [];
+  const allDonations = [...studentDonations, ...guestDonations];
 
-  const topDonors = [...donations]
-    .sort((a, b) => b.amount - a.amount)
-    .slice(0, 3);
+  // topDonors from donorStats
+  const topDonors = apiData?.donorStats?.topDonors ?? [];
+  const totalDonors = apiData?.donorStats?.totalDonors ?? 0;
 
   if (isLoading) return <ViewCampaignSkeleton />;
 
@@ -198,6 +217,7 @@ export function ViewCampaings() {
               ))}
             </div>
 
+            {/* ── STORY TAB ── */}
             {activeTab === "story" && (
               <div>
                 {/* Main Image */}
@@ -287,69 +307,63 @@ export function ViewCampaings() {
                   </div>
                 </div>
 
-                {/* Top Donors */}
+                {/* Top Donors from donorStats */}
                 {topDonors.length > 0 && (
                   <div>
                     <h3 className="text-base font-semibold text-gray-900 mb-3">
-                      Top 3 Donors
+                      Top Donors
                     </h3>
                     <div className="space-y-0">
-                      {topDonors.map((donor, index) => (
+                      {topDonors.map((donor) => (
                         <div
                           key={donor._id}
-                          className={`flex items-center justify-between py-4 mb-4 rounded-md ${
-                            index < topDonors.length - 1
-                              ? "border border-[#ACACAC] px-4"
-                              : ""
-                          }`}
+                          className="border border-[#ACACAC] px-4 py-4 mb-4 rounded-md flex items-center justify-between"
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold flex-shrink-0">
-                              {donor.donor.name.charAt(0).toUpperCase()}
+                              {donor.name.charAt(0).toUpperCase()}
                             </div>
                             <div>
                               <p className="text-sm font-medium text-gray-900">
-                                {donor.donor.name}
+                                {donor.name}
                               </p>
                               <p className="text-xs text-gray-400">
-                                {new Date(donor.createdAt).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                  },
-                                )}
+                                {donor.city}, {donor.country}
+                              </p>
+                              <p className="text-xs text-gray-400">
+                                {donor.donationsCount} donation{donor.donationsCount !== 1 ? "s" : ""}
                               </p>
                             </div>
                           </div>
                           <p className="text-base font-semibold text-gray-900">
-                            $ {donor.amount.toLocaleString()}
+                            $ {donor.totalAmount.toLocaleString()}
                           </p>
                         </div>
                       ))}
                     </div>
+
+                    {/* Show more → goes to donors tab */}
+                    <button
+                      onClick={() => setActiveTab("donors")}
+                      className="flex items-center gap-1 text-blue-500 text-sm font-medium hover:text-blue-700 transition-colors mt-1"
+                    >
+                      Show more donors ›
+                    </button>
                   </div>
                 )}
               </div>
             )}
 
-            {/* {activeTab === "updates" && (
-              <div className="text-center py-16 text-gray-400 text-sm">
-                No updates yet.
-              </div>
-            )} */}
-
-            {/* Donors Tab */}
+            {/* ── DONORS TAB ── */}
             {activeTab === "donors" && (
               <div>
-                {donations.length === 0 ? (
+                {allDonations.length === 0 ? (
                   <div className="text-center py-16 text-gray-400 text-sm">
                     No donors yet.
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {donations.map((donation) => (
+                    {allDonations.map((donation) => (
                       <div
                         key={donation._id}
                         className="border border-[#ACACAC] rounded-xl px-4 py-3 flex items-center justify-between"
@@ -407,7 +421,7 @@ export function ViewCampaings() {
 
               <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
                 <span>{fundedPercent}% Funded</span>
-                <span>{donations.length} Donors</span>
+                <span>{totalDonors} Donors</span>
               </div>
 
               <Link href={`/donor-information?campaignId=${apiData?._id}`}>
