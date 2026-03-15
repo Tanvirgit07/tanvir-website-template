@@ -30,7 +30,7 @@ interface CampaignUI {
 
 function CampaignCardSkeleton() {
   return (
-    <div className="rounded-xl overflow-hidden border border-border h-screen">
+    <div className="rounded-xl overflow-hidden border border-border">
       {/* Image */}
       <Skeleton className="h-48 w-full rounded-none" />
 
@@ -116,7 +116,7 @@ export function AllCampaignCards() {
         </div> */}
 
         {/* Campaign Grid */}
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 h-screen">
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {isLoading
             ? Array.from({ length: 3 }).map((_, i) => (
                 <CampaignCardSkeleton key={i} />
